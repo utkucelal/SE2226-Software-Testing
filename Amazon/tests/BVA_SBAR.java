@@ -11,7 +11,14 @@ public class BVA_SBAR {
     @BeforeEach
     void setup() {
         bot = new Bot(TestURL);
+        bot.connect();
     }
+
+    @AfterEach
+    void teardown() {
+        bot.quit();
+    }
+
 
     @Test
     @Order(1)

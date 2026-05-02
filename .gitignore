@@ -22,3 +22,5 @@ Amazon/*.class
 dist/
 build/
 *.tmp
+
+GIT_CHEATSHEET.md
