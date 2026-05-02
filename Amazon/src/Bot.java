@@ -212,4 +212,8 @@ public class Bot {
     public void resetError() {
         this.Error = "";
     }
+
+    public void pagerefresh() {
+        driver.navigate().refresh();
+    }
 }
