@@ -12,7 +12,7 @@ public class BVA_QNTY {
 
     @BeforeEach
     void setup() {
-        bot = new Bot(TestURL);
+        bot = new Bot(TestURL,false);
         bot.connect();
     }
 
@@ -24,38 +24,39 @@ public class BVA_QNTY {
     @Test
     @Order(1)
     @DisplayName("B1 System should display error or invalid input message.")
-    void zeroQuantity(){
-        bot.addItemToCart(quantity, product);
-        bot.setCartQuantity(0);
+    void zeroQuantity() throws InterruptedException {
+        bot.addItemToCart("11", product,0);
+        bot.setCartQuantity(0,1);
         assertFalse(bot.isCartEmpty(),"Item was removed from the shopping cart."); //Faillması lazım
     }
 
     @Test
     @Order(2)
-    @DisplayName("product must successfully added to cart.")
-    void minoneProductToCart(){
-        bot.addItemToCart(quantity, product);
-        bot.setCartQuantity(1);
-        assertEquals(1,bot.fetchQuantity(),"Item quantity updated successfully");
+    @DisplayName("B2 product must successfully added to cart.")
+    void minoneProductToCart() throws InterruptedException{
+        bot.addItemToCart(quantity, product,0);
+        bot.setCartQuantity(1,1);
+        assertEquals(1,bot.fetchQuantity(1),"Item quantity updated successfully");
     }
 
     @Test
     @Order(3)
-    @DisplayName("product must successfully added to cart.")
-    void maxoneProductToCart(){
-        bot.addItemToCart(quantity, product);
-        bot.setCartQuantity(11);
+    @DisplayName("B3 product must successfully added to cart.")
+    void maxoneProductToCart() throws InterruptedException {
+        bot.addItemToCart(quantity, product,0);
+        bot.setCartQuantity(11,1);
+        Thread.sleep(2000);
         bot.pagerefresh();
-        assertEquals(11,bot.fetchQuantity());
+        assertEquals(11,bot.fetchQuantity(1));
     }
 
     @Test
     @Order(4)
-    @DisplayName("product must successfully added to cart.")
-    void maxProductToCart(){
+    @DisplayName("B4 System gives out of stock error and set the quantity to max stock")
+    void maxProductToCart() throws InterruptedException{
         int overQ = 12;
-        bot.addItemToCart(quantity, "B0FFBV27QL");
-        bot.setCartQuantity(overQ);
+        bot.addItemToCart(quantity, "B0FFBV27QL",0);
+        bot.setCartQuantity(overQ,1);
         assertEquals("Out of Stock", bot.getError());
     }
 }
