@@ -10,7 +10,7 @@ public class BVA_SBAR {
 
     @BeforeEach
     void setup() {
-        bot = new Bot(TestURL);
+        bot = new Bot(TestURL,false);
         bot.connect();
     }
 
