@@ -2,7 +2,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UC_CMOC {
     static final String TestURL = "https://www.amazon.com.tr/";
@@ -30,9 +29,10 @@ public class UC_CMOC {
         bot.addItemToCart(quantity,productTwo,0);
         bot.setCartQuantity(2,1);
         bot.setCartQuantity(0,2);
-        Thread.sleep(5000);
+        Thread.sleep(5000); //5 second stop for presentation
         bot.checkout();
-        bot.fuckGoBack();
+        Thread.sleep(10000); //10 second stop for presentation
+        bot.GoBack();
     }
 
 }

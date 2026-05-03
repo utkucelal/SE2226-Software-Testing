@@ -9,20 +9,23 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
+/*
+Prime account session "C:\Program Files\Google\Chrome\Application\chrome.exe"  --remote-debugging-port=9222 --user-data-dir="C:\Chromes\\utku-prime"
+Non-Prime account session "C:\Program Files\Google\Chrome\Application\chrome.exe"  --remote-debugging-port=9222 --user-data-dir="C:\Chromes\alp-no-prime"
+*/
 public class Bot {
     private final String URL;
     private WebDriver driver;
     private WebDriverWait wait;
     private Actions actionProvider;
-    private boolean useCookies;
-    private boolean correctFilter = false;
 
+    private boolean useCookies;
     private static final int TIMEOUT = 5; // 5 seconds
 
     private String Tabtitle;
     private String Error;
     private int cartQuantity;
+    private boolean correctFilter = false;
 
     Bot(String URL, boolean useCookies) {
         this.URL = URL;
@@ -51,6 +54,14 @@ public class Bot {
         driver.quit();
     }
 
+    public void pagerefresh() {
+        driver.navigate().refresh();
+    }
+
+    public void GoBack() {
+        driver.navigate().back();
+    }
+
     public String getTabtitle() {
         return Tabtitle;
     }
@@ -59,10 +70,65 @@ public class Bot {
         return Error;
     }
 
+    List<String> getAdvantages(){
+        List<String> result = new ArrayList<>();
+        List<WebElement> discountSpace = driver.findElements(By.cssSelector(".a-row.a-color-success"));
+        for(int i = 0; i < discountSpace.size(); i++){
+            result.add(discountSpace.get(i).findElement(By.cssSelector(".a-column.a-span8")).getAttribute("innerText"));
+            //System.out.println(discountSpace.get(i).findElement(By.cssSelector(".a-column.a-span8")).getAttribute("innerText"));
+        }
+        return result;
+    }
+
+    public boolean isCorrectFilter() {
+        return correctFilter;
+    }
+
+    boolean isCartEmpty(){
+        wait.until(driver -> driver.findElement(By.id("sc-subtotal-label-activecart")).isDisplayed());
+        WebElement totalQ = driver.findElement(By.id("sc-subtotal-label-activecart"));
+        //System.out.println("Total Q: " + totalQ.getText());
+        return totalQ.getText().contains("0 ürün");
+//        List<WebElement> shareBtns = driver.findElements(By.cssSelector("[data-feature-id='save-for-later-action']"));
+//        if(shareBtns.isEmpty()) return true;
+//        return false;
+    }
+
+    boolean isPrime(){
+        List<WebElement> primelogo = driver.findElements(By.cssSelector("i.a-icon.a-icon-prime"));
+        if(primelogo.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isPrimeCargoFree() {
+        try {
+            WebElement amount = driver.findElement(By.xpath("//*[@id=\"subtotals-marketplace-table\"]/li[2]/span/div/div[2]/span/span"));
+            String text = amount.getAttribute("innerText").replace("\u00a0", " ").trim();
+            return text.contains("0,00");
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    public boolean isCargoFree() {
+        List<String> Advantages = getAdvantages();
+        if(Advantages.isEmpty()) return false;
+        if(Advantages.contains("Kargo BEDAVA.")) return true;
+        return false;
+    }
+
+    public boolean isDiscounted() {
+        List<String> Advantages = getAdvantages();
+        if(Advantages.isEmpty()) return false;
+        if(Advantages.size() == 1 && Advantages.contains("Kargo BEDAVA.")) return false; //free shipping doesnt count as a advantage
+        return true;
+    }
+
     private void acceptCookie() {
         List<WebElement> cookiebanner = driver.findElements(By.id("cos-banner"));
         if(cookiebanner.isEmpty()) {
-            System.out.println("No cookie found");
             return;
         }
         wait.until(driver -> driver.findElement(By.id("cos-banner")).isDisplayed()); //id="cos-banner"
@@ -70,12 +136,7 @@ public class Bot {
         acceptbttn.click();
     }
 
-    public void clearCart() {
-        WebElement clearbtn = driver.findElement(By.cssSelector(".sc-action-delete-active .a-color-link"));
-        clearbtn.click();
-    }
-
-    void makesearch(String query){
+    void makeSearch(String query){
         //write query
         wait.until(driver -> driver.findElement(By.cssSelector("#twotabsearchtextbox")).isDisplayed());
         WebElement searchBox = driver.findElement(By.cssSelector("#twotabsearchtextbox"));
@@ -123,8 +184,8 @@ public class Bot {
         acceptCookie();
 
         //select quantity
-        System.out.println("annonceid "+ annonceid);
-        WebElement showlist = driver.findElement(By.id("a-autoid-"+annonceid+"-announce")); //DEĞİŞTİİİİR 2 -> 1
+        //System.out.println("annonceid "+ annonceid);
+        WebElement showlist = driver.findElement(By.id("a-autoid-"+annonceid+"-announce"));
         showlist.click();
         Thread.sleep(2000);
         WebElement list = driver.findElement(By.cssSelector("ul[role='listbox']"));
@@ -146,16 +207,6 @@ public class Bot {
         //fetchQuantity();
     }
 
-    private int minimumRestrc() {
-        System.out.println("minimum restriction");
-        List<WebElement> restrictions = driver.findElements(By.id("trigger_popover"));
-        if(restrictions.isEmpty()) return 0;
-        String resStr = restrictions.get(0).getText();
-        char lastChar = resStr.charAt(resStr.length() - 1);
-        System.out.println("last char " + lastChar);
-        return lastChar - '0';
-    }
-
     int fetchQuantity(int ItemID) {
         WebElement countainer = driver.findElement(By.cssSelector("[data-item-index='" + ItemID + "']"));
         //get stock
@@ -173,16 +224,6 @@ public class Bot {
 
          return cartQuantity;
 
-    }
-
-    boolean isCartEmpty(){
-        wait.until(driver -> driver.findElement(By.id("sc-subtotal-label-activecart")).isDisplayed());
-        WebElement totalQ = driver.findElement(By.id("sc-subtotal-label-activecart"));
-        System.out.println("Total Q: " + totalQ.getText());
-        return totalQ.getText().contains("0 ürün");
-//        List<WebElement> shareBtns = driver.findElements(By.cssSelector("[data-feature-id='save-for-later-action']"));
-//        if(shareBtns.isEmpty()) return true;
-//        return false;
     }
 
     void setCartQuantity(int newQuantity,int itemID) throws InterruptedException {
@@ -252,31 +293,10 @@ public class Bot {
         this.Error = "";
     }
 
-    public void pagerefresh() {
-        driver.navigate().refresh();
-    }
-
-    boolean isPrime(){
-        List<WebElement> primelogo = driver.findElements(By.cssSelector("i.a-icon.a-icon-prime"));
-        if(primelogo.isEmpty()) {
-            return false;
-        }
-        return true;
-    }
-
     public void checkout() {
         WebElement checkoutBtn = driver.findElement(By.name("proceedToRetailCheckout"));
         checkoutBtn.click();
-    }
-
-    public boolean isCargoFree() {
-        try {
-            WebElement amount = driver.findElement(By.xpath("//*[@id=\"subtotals-marketplace-table\"]/li[2]/span/div/div[2]/span/span"));
-            String text = amount.getAttribute("innerText").replace("\u00a0", " ").trim();
-            return text.contains("0,00");
-        } catch (NoSuchElementException e) {
-            return false;
-        }
+        wait.until(driver -> Objects.equals(((JavascriptExecutor) driver).executeScript("return document.readyState"), "complete"));
     }
 
     public void goSmartPhone() {
@@ -320,7 +340,7 @@ public class Bot {
                     String priceStr = price.get(0).getText();
                     int priceInt = Integer.valueOf(priceStr.replace(".", ""));
                     PriceList.add(priceInt);
-                    System.out.println(priceInt);
+                    //System.out.println(priceInt);
                 }
 
             }
@@ -330,11 +350,12 @@ public class Bot {
         }
     }
 
-    public boolean isCorrectFilter() {
-        return correctFilter;
+    public void confirmAddress() throws InterruptedException {
+        WebElement adressBtn = driver.findElement(By.id("change-delivery-link"));
+        adressBtn.click();
+        Thread.sleep(1000);
+        WebElement confirmButton = driver.findElement(By.cssSelector(".a-button-inner")); //aria-labelledby="checkout-primary-continue-button-id-announce"
+        confirmButton.click();
     }
 
-    public void fuckGoBack() {
-        driver.navigate().back();
-    }
 }

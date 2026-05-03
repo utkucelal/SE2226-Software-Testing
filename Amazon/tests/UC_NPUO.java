@@ -4,7 +4,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UC_PUO {
+
+public class UC_NPUO {
 
     static final String TestURL = "https://www.amazon.com.tr/";
     private static Bot bot;
@@ -25,11 +26,14 @@ public class UC_PUO {
 
     @Test
     @DisplayName("If the user has a Prime membership, the system always offers free shipping on all orders")
-    void UC_PUO_Test() throws InterruptedException{
+    void UC_NPUO_Test() throws InterruptedException{
         bot.openProduct(product);
-        assertTrue(bot.isPrime(),"product have prime feature");
+        assertFalse(bot.isPrime(),"product have prime feature");
         bot.addItemToCart(quantity,product,2);
         bot.checkout();
-        assertTrue(bot.isPrimeCargoFree(),"product have free shipping feature");
+        //Thread.sleep(1000);
+        bot.confirmAddress();
+        assertFalse(bot.isPrimeCargoFree(),"product have free shipping feature");
     }
+
 }

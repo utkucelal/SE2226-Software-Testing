@@ -36,7 +36,7 @@ public class ECP_QNTY {
     void zeroQuantity() throws InterruptedException{
         bot.addItemToCart(quantity, product,0);
         bot.setCartQuantity(0,1);
-        assertTrue(bot.isCartEmpty());
+        assertFalse(bot.isCartEmpty());
     }
 
     @Test

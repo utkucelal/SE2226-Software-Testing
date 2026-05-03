@@ -27,7 +27,7 @@ public class BVA_QNTY {
     void zeroQuantity() throws InterruptedException {
         bot.addItemToCart("11", product,0);
         bot.setCartQuantity(0,1);
-        assertFalse(bot.isCartEmpty(),"Item was removed from the shopping cart."); //Faillması lazım
+        assertFalse(bot.isCartEmpty(),"Item was removed from the shopping cart.");
     }
 
     @Test
