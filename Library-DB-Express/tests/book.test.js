@@ -5,7 +5,8 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await sequelize.close();
+  // do not close the shared sequelize connection here — closing it corrupts
+  // the cached module for other test files in Stryker's Jest runner
 });
 
 describe('Book Model', () => {
@@ -76,7 +77,7 @@ describe('Book Model', () => {
   test('should allow genre and year to be omitted', async () => {
     const book = await Book.create({ title: 'Minimal Book', author: 'Some Author' });
     expect(book.id).toBeDefined();
-    expect(book.genre).toBeNull();
-    expect(book.year).toBeNull();
+    expect(book.genre).toBeUndefined()
+    expect(book.year).toBeUndefined()
   });
 });

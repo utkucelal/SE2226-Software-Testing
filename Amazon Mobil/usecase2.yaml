@@ -1,0 +1,13 @@
+appId: com.amazon.mShop.android.shopping
+---
+- launchApp:
+    clearState: false
+- tapOn:
+    id: ".*search.*"
+- inputText: "dido"
+- pressKey: Enter
+- tapOn: Sepete ekle
+- tapOn:
+    point: 50%,93%
+- assertVisible: Prime
+- assertVisible: "ÜCRETSİZ teslimat "

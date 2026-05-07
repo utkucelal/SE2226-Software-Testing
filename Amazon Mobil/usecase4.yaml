@@ -1,0 +1,58 @@
+appId: com.amazon.mShop.android.shopping
+---
+- launchApp:
+    clearState: false
+- tapOn:
+    id: ".*search.*"
+- inputText: "su"
+- pressKey: Enter
+
+- tapOn: Hayat Doğal Mineralli Su (12 x 500 ml)
+- swipe:
+    direction: UP
+- tapOn:
+    id: add-to-cart-button
+- assertVisible: Sepet 1 ürün 3 / 4 sekmesi
+
+- tapOn:
+    id: chrome_action_bar_back_icon_image
+    
+- swipe:
+    direction: UP
+
+- tapOn: Hayat Doğal Mineralli Su 6x1,5 L
+- scrollUntilVisible:
+    element:
+      id: buyNowCheckout
+- tapOn:
+    id: add-to-cart-button
+- assertVisible: Sepet 2 ürünler 3 / 4 sekmesi
+
+
+- tapOn:
+    point: 50%,93%
+
+- tapOn:
+    text: Sil Hayat Doğal Mineralli Su 6x1,5 L
+    index: 1
+- assertVisible: Sepet 1 ürün 3 / 4 sekmesi
+
+- tapOn: Miktarı bir artırın Hayat Doğal Mineralli Su (12 x 500 ml)
+- assertVisible: Sepet 2 ürünler 3 / 4 sekmesi
+
+- tapOn:
+    id: sc-buy-box-ptc-button
+
+- tapOn: İPTAL ET
+- tapOn:
+    point: 0%,93%
+- tapOn:
+    point: 0%,93%
+
+
+
+
+
+
+
+
