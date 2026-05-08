@@ -34,15 +34,4 @@ appId: com.amazon.mShop.android.shopping
     commands:
       - swipe:
           direction: UP
-
-- tapOn:
-    id: chrome_action_bar_back_icon_image
-
-- swipe:
-    direction: UP
-- tapOn: Microsoft Surface Pro Copilot+ PC (11. Nesil) ZID-00001-13” Touch Oled - Snapdragon X Elite - 32GB Ram – 1TB SSD – Win11 Home – 2 Yıl Garanti
-- repeat:
-    times: 2
-    commands:
-      - swipe:
-          direction: UP
+          
